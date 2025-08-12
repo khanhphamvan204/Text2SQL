@@ -1,0 +1,209 @@
+{
+    "roles": {
+        "student": {
+            "table_permissions": {
+                "Students": {
+                    "allowed_operations": [
+                        "SELECT",
+                        "UPDATE"
+                    ],
+                    "allowed_columns": [
+                        "StudentID",
+                        "StudentCode",
+                        "DateOfBirth",
+                        "FullName",
+                        "Email",
+                        "PhoneNumber",
+                        "Major",
+                        "EnrollmentDate"
+                    ],
+                    "conditions": {
+                        "SELECT": "StudentID = {student_id}",
+                        "UPDATE": "StudentID = {student_id}"
+                    }
+                },
+                "Enrollments": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "EnrollmentID",
+                        "StudentID",
+                        "ClassID",
+                        "EnrollmentDate",
+                        "Grade",
+                        "Status"
+                    ],
+                    "conditions": {
+                        "SELECT": "StudentID = {student_id}"
+                    }
+                },
+                "Classes": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "ClassID",
+                        "CourseID",
+                        "Semester",
+                        "AcademicYear",
+                        "MaxCapacity",
+                        "CurrentEnrollment",
+                        "Status"
+                    ],
+                    "conditions": {
+                        "SELECT": "ClassID IN (SELECT ClassID FROM Enrollments WHERE StudentID = {student_id})"
+                    }
+                },
+                "Courses": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "CourseID",
+                        "CourseCode",
+                        "CourseName",
+                        "Credits",
+                        "Description"
+                    ],
+                    "conditions": {
+                        "SELECT": "CourseID IN (SELECT CourseID FROM Classes WHERE ClassID IN (SELECT ClassID FROM Enrollments WHERE StudentID = {student_id}))"
+                    }
+                },
+                "Schedules": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "ScheduleID",
+                        "ClassID",
+                        "DayOfWeek",
+                        "StartTime",
+                        "EndTime",
+                        "RoomLocation"
+                    ],
+                    "conditions": {
+                        "SELECT": "ClassID IN (SELECT ClassID FROM Enrollments WHERE StudentID = {student_id})"
+                    }
+                },
+                "Teachers": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "FullName"
+                    ],
+                    "conditions": {
+                        "SELECT": "TeacherID IN (SELECT TeacherID FROM Classes WHERE ClassID IN (SELECT ClassID FROM Enrollments WHERE StudentID = {student_id}))"
+                    }
+                }
+            }
+        },
+        "teacher": {
+            "table_permissions": {
+                "Teachers": {
+                    "allowed_operations": [
+                        "SELECT",
+                        "UPDATE"
+                    ],
+                    "allowed_columns": [
+                        "TeacherID",
+                        "FullName",
+                        "Email",
+                        "PhoneNumber",
+                        "TeacherCode",
+                        "Department",
+                        "HireDate"
+                    ],
+                    "conditions": {
+                        "SELECT": "TeacherID = {teacher_id}",
+                        "UPDATE": "TeacherID = {teacher_id}"
+                    }
+                },
+                "Classes": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "ClassID",
+                        "CourseID",
+                        "TeacherID",
+                        "Semester",
+                        "AcademicYear",
+                        "MaxCapacity",
+                        "CurrentEnrollment",
+                        "Status"
+                    ],
+                    "conditions": {
+                        "SELECT": "TeacherID = {teacher_id}"
+                    }
+                },
+                "Enrollments": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "EnrollmentID",
+                        "StudentID",
+                        "ClassID",
+                        "EnrollmentDate",
+                        "Grade",
+                        "Status"
+                    ],
+                    "conditions": {
+                        "SELECT": "ClassID IN (SELECT ClassID FROM Classes WHERE TeacherID = {teacher_id})"
+                    }
+                },
+                "Students": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "StudentID",
+                        "StudentCode",
+                        "DateOfBirth",
+                        "FullName",
+                        "Email",
+                        "PhoneNumber",
+                        "Major",
+                        "EnrollmentDate"
+                    ],
+                    "conditions": {
+                        "SELECT": "StudentID IN (SELECT StudentID FROM Enrollments WHERE ClassID IN (SELECT ClassID FROM Classes WHERE TeacherID = {teacher_id}))"
+                    }
+                },
+                "Courses": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "CourseID",
+                        "CourseCode",
+                        "CourseName",
+                        "Credits",
+                        "Description"
+                    ],
+                    "conditions": {
+                        "SELECT": "CourseID IN (SELECT CourseID FROM Classes WHERE TeacherID = {teacher_id})"
+                    }
+                },
+                "Schedules": {
+                    "allowed_operations": [
+                        "SELECT"
+                    ],
+                    "allowed_columns": [
+                        "ScheduleID",
+                        "ClassID",
+                        "DayOfWeek",
+                        "StartTime",
+                        "EndTime",
+                        "RoomLocation"
+                    ],
+                    "conditions": {
+                        "SELECT": "ClassID IN (SELECT ClassID FROM Classes WHERE TeacherID = {teacher_id})"
+                    }
+                }
+            }
+        }
+    }
+}
